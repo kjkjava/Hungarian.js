@@ -6,8 +6,8 @@
 // https://github.com/w01fe/hungarian/blob/master/src/jvm/w01fe/hungarian/HungarianAlgorithm.java
 // It wasn't hard because Java and JavaScript are the same thing (lolol jokes).
 // But really, it's very similar to the (well-done) original.
-// I suppose it's not common to see O(n^4) algorithms written in JS, but the
-// future is here!
+// I suppose it's not common to see O(n^3) algorithms written in JS, but the
+// future is now!
 
 // Store everything in an object, which is created from the
 // following function, which executes and returns immediately.
@@ -34,11 +34,20 @@
             path = [], // [matrix.length * matrix[0].length + 2] x [2]
             step = 1,
             done = false,
-            assignment = []; // [matrix.length] x [2]
+            // Number.MAX_VALUE causes overflow on profits.
+            // Should be larger or smaller than all matrix values. (i.e. -1 or 999999)
+            forbiddenValue = -1, 
+            assignments = [],
+            assignmentsSeen; // [matrix.length] x [2]
 
-
-        // Create the cost matrix
+        // Create the cost matrix, so we can work without modifying the
+        // original input.
         cost = copyOf(matrix);
+
+        // If it's a rectangular matrix, pad it with a forbidden value (MAX_VALUE).
+        // Whether they are chosen first or last (profit or cost, respectively)
+        // should not matter, as we will not include assignments out of range anyway.
+        makeSquare(cost, forbiddenValue);
 
         if(isProfitMatrix === true) {
             maxWeight = findLargest(cost);
@@ -50,23 +59,25 @@
         }
 
         // Initialize the 1D arrays with zeros
-        for(i=0; i<matrix.length; i++) {
+        for(i=0; i<cost.length; i++) {
             rowCover[i] = 0;
         }
-        for(j=0; j<matrix[0].length; j++) {
+        for(j=0; j<cost[0].length; j++) {
             colCover[j] = 0;
         }
 
         // Initialize the inside arrays to make 2D arrays
         // Fill with zeros
-        for(i=0; i<matrix.length; i++) {
+        for(i=0; i<cost.length; i++) {
             mask[i] = [];
-            for(j=0; j<matrix[0].length; j++) {
+            for(j=0; j<cost[0].length; j++) {
                 mask[i][j] = 0;
             }
-            assignment[i] = [0,0];
         }
-        for(i=0; i<(matrix.length * matrix[0].length + 2); i++) {
+        for(i=0; i<Math.min(matrix.length, matrix[0].length); i++) {
+            assignments[i] = [0,0];
+        }
+        for(i=0; i<(cost.length * cost[0].length + 2); i++) {
             path[i] = [];
         }
 
@@ -97,11 +108,16 @@
             }
         }
 
+        // In an input matrix taller than it is wide, the first assignment
+        // column will have to skip some numbers, so the index will not
+        // always match the first column.
+        assignmentsSeen = 0;
         for(i=0; i<mask.length; i++) {
             for(j=0; j<mask[i].length; j++) {
-                if(mask[i][j] === 1) {
-                    assignment[i][0] = i;
-                    assignment[i][1] = j;
+                if(i < matrix.length && j < matrix[0].length && mask[i][j] === 1) {
+                    assignments[assignmentsSeen][0] = i;
+                    assignments[assignmentsSeen][1] = j;
+                    assignmentsSeen++;
                 }
             }
         }
@@ -111,12 +127,12 @@
             // array, set the returnSum argument (or use this
             // code on the return value outside of this function):
             var sum = 0;
-            for(i=0; i<assignment.length; i++) {
-                sum = sum + matrix[assignment[i][0]][assignment[i][1]];
+            for(i=0; i<assignments.length; i++) {
+                sum = sum + matrix[assignments[i][0]][assignments[i][1]];
             }
             return sum;
         } else {
-            return assignment;
+            return assignments;
         }
     }
 
@@ -446,4 +462,34 @@
 
         return copy;
     }
+
+    // Makes a rectangular matrix square by padding it with some value
+    // This modifies the matrix argument directly instead of returning a copy
+    function makeSquare(matrix, padValue) {
+        var rows = matrix.length,
+            cols = matrix[0].length,
+            i, j;
+
+        if(rows === cols) {
+            // The matrix is already square.
+            return;
+        } else if(rows > cols) {
+            // Pad on some extra columns on the right.
+            for(i=0; i<rows; i++) {
+                for(j=cols; j<rows; j++) {
+                    matrix[i][j] = padValue;
+                }
+            }
+        } else if(rows < cols) {
+            // Pad on some extra rows at the bottom.
+            for(i=rows; i<cols; i++) {
+                matrix[i] = [];
+                for(j=0; j<cols; j++) {
+                    matrix[i][j] = padValue;
+                }
+            }
+        }
+        // None of the above cases may execute if there is a problem with the input matrix.
+    }
+
 })(this);

@@ -7,12 +7,21 @@
 		<script type="text/javascript">
 			window.onload = function() {
 				// Test JavaScript goes here!
-				var matrix, assignments, results, i, j;
+				var matrix, assignments, assignmentsSeen, results, i, j;
 
-				matrix =	[	[10,19,8,15],
-								[10,18,7,17],
-								[13,16,9,14],
-								[14,17,10,19]	];
+				// matrix =	[	[10,19, 8,15],
+				// 				[10,18, 7,17],
+				// 				[13,16, 9,14],
+				// 				[14,17,10,19]	];
+				// matrix = [	[10,19, 8,15],
+				// 			[10,18, 7,17],
+				// 			[13,16, 9,14],
+				// 			[12,19, 8,18],
+				// 			[14,17,10,19]	];
+				matrix = [	[10,19,8,15,14],
+							[10,18,7,17,17],
+							[13,16,9,14,10],
+							[12,19,8,18,19]	];
 
 				assignments = hungarian(matrix);
 
@@ -21,10 +30,12 @@
 				// Run tests assuming it's a cost matrix
 				resultsHTML = "<b>Cost matrix with assignments highlighted:</b>"
 				resultsHTML += "<table>";
+				assignmentsSeen = 0;
 				for(i=0; i<matrix.length; i++) {
 					resultsHTML += "<tr>";
 					for(j=0; j<matrix[0].length; j++) {
-						if(assignments[i][0] === i && assignments[i][1] === j) {
+						if(assignmentsSeen < assignments.length && assignments[assignmentsSeen][0] === i && assignments[assignmentsSeen][1] === j) {
+							assignmentsSeen++;
 							resultsHTML += "<td style=\"background-color: #FFCC99; text-align: right;\">";
 						} else {
 							resultsHTML += "<td style=\"text-align: right;\">";
@@ -49,10 +60,12 @@
 				assignments = hungarian(matrix, true);
 				resultsHTML += "<b>Profit matrix with assignments highlighted:</b>"
 				resultsHTML += "<table>";
+				assignmentsSeen = 0;
 				for(i=0; i<matrix.length; i++) {
 					resultsHTML += "<tr>";
 					for(j=0; j<matrix[0].length; j++) {
-						if(assignments[i][0] === i && assignments[i][1] === j) {
+						if(assignmentsSeen < assignments.length && assignments[assignmentsSeen][0] === i && assignments[assignmentsSeen][1] === j) {
+							assignmentsSeen++;
 							resultsHTML += "<td style=\"background-color: #99CCFF; text-align: right;\">";
 						} else {
 							resultsHTML += "<td style=\"text-align: right;\">";
