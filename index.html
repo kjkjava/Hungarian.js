@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hungarian.js Test Cases</title>
+		<script src="hungarian.js"></script>
+		<script type="text/javascript">
+			window.onload = function() {
+				// Test JavaScript goes here!
+				var matrix, assignments, results, i, j;
+
+				matrix =	[	[10,19,8,15],
+								[10,18,7,17],
+								[13,16,9,14],
+								[14,17,10,19]	];
+
+				assignments = hungarian(matrix);
+
+				// Generate HTML to display the result
+
+				// Run tests assuming it's a cost matrix
+				resultsHTML = "<b>Cost matrix with assignments highlighted:</b>"
+				resultsHTML += "<table>";
+				for(i=0; i<matrix.length; i++) {
+					resultsHTML += "<tr>";
+					for(j=0; j<matrix[0].length; j++) {
+						if(assignments[i][0] === i && assignments[i][1] === j) {
+							resultsHTML += "<td style=\"background-color: #FFCC99; text-align: right;\">";
+						} else {
+							resultsHTML += "<td style=\"text-align: right;\">";
+						}
+						resultsHTML += matrix[i][j];
+						resultsHTML += "</td>";
+					}
+					resultsHTML += "</tr>";
+				}
+				resultsHTML += "</table><br />\n";
+
+				resultsHTML += "<b>Total cost of assignment:</b> ";
+				// This is obviously inefficient to run the entire algorithm again just
+				// to get the sum of the assigned costs.  In practice, it would be easy
+				// for the end user to use the assignments and the input matrix to
+				// compute the sum, but this is to test the built in functionality, when
+				// that's all the user needs.
+				resultsHTML += hungarian(matrix, false, true);
+				resultsHTML += "<br /><br /><br />";
+
+				// Run the same tests assuming it's a profit matrix
+				assignments = hungarian(matrix, true);
+				resultsHTML += "<b>Profit matrix with assignments highlighted:</b>"
+				resultsHTML += "<table>";
+				for(i=0; i<matrix.length; i++) {
+					resultsHTML += "<tr>";
+					for(j=0; j<matrix[0].length; j++) {
+						if(assignments[i][0] === i && assignments[i][1] === j) {
+							resultsHTML += "<td style=\"background-color: #99CCFF; text-align: right;\">";
+						} else {
+							resultsHTML += "<td style=\"text-align: right;\">";
+						}
+						resultsHTML += matrix[i][j];
+						resultsHTML += "</td>";
+					}
+					resultsHTML += "</tr>";
+				}
+				resultsHTML += "</table><br />\n";
+
+				resultsHTML += "<b>Total profit from assignment:</b> ";
+				// This is obviously inefficient to run the entire algorithm again just
+				// to get the sum of the assigned costs.  In practice, it would be easy
+				// for the end user to use the assignments and the input matrix to
+				// compute the sum, but this is to test the built in functionality, when
+				// that's all the user needs.
+				resultsHTML += hungarian(matrix, true, true);
+				resultsHTML += "<br />";
+
+				// Write the HTML to the webpage
+				document.getElementById("results").innerHTML = resultsHTML;
+			}
+		</script>
+	</head>
+	<body>
+		<div id="container">
+			<h2>Hungarian.js Test Cases</h2>
+			<p>
+				This document is a nice place to quickly test out Hungarian.js.<br />
+				See the source code for the input and see below for the output:
+			</p>
+			<div id="results"></div>
+		</div>
+	</body>
+</html>
