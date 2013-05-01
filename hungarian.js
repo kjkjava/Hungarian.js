@@ -37,8 +37,8 @@
         // Number.MAX_VALUE causes overflow on profits.
         // Should be larger or smaller than all matrix values. (i.e. -1 or 999999)
         forbiddenValue = -1, 
-        assignments = [],
-        assignmentsSeen; // [matrix.length] x [2]
+        assignments = [], // [min(matrix.length, matrix[0].length)] x [2]
+        assignmentsSeen;
 
     // Create the cost matrix, so we can work without modifying the
     // original input.
