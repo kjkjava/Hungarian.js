@@ -26,7 +26,7 @@
   // sum up the chosen costs/profits and return that instead
   // of the assignment matrix.
   function hgAlgorithm(matrix, isProfitMatrix, returnSum) {
-    var cost, maxWeight, i, j,
+    var cost, i, j,
         mask = [], // the mask array: [matrix.length] x [matrix[0].length]
         rowCover = [], // the row covering vector: [matrix.length]
         colCover = [], // the column covering vector: [matrix[0].length]
@@ -34,9 +34,8 @@
         path = [], // [matrix.length * matrix[0].length + 2] x [2]
         step = 1,
         done = false,
-        // Number.MAX_VALUE causes overflow on profits.
-        // Should be larger or smaller than all matrix values. (i.e. -1 or 999999)
-        forbiddenValue = -1, 
+        maxWeightPlusOne, // Should be larger or smaller than all matrix values.
+                          // Number.MAX_VALUE causes overflow on profits
         assignments = [], // [min(matrix.length, matrix[0].length)] x [2]
         assignmentsSeen;
 
@@ -44,16 +43,17 @@
     // original input.
     cost = copyOf(matrix);
 
+    maxWeightPlusOne = findLargest(cost) + 1;
+
     // If it's a rectangular matrix, pad it with a forbidden value (MAX_VALUE).
     // Whether they are chosen first or last (profit or cost, respectively)
-    // should not matter, as we will not include assignments out of range anyway.
-    makeSquare(cost, forbiddenValue);
+    // shouldn't matter, as we will not include assignments out of range anyway.
+    makeSquare(cost, maxWeightPlusOne);
 
     if(isProfitMatrix === true) {
-      maxWeight = findLargest(cost);
       for(i=0; i<cost.length; i++) {
         for(j=0; j<cost[i].length; j++) {
-          cost[i][j] = maxWeight - cost[i][j];
+          cost[i][j] = maxWeightPlusOne - cost[i][j];
         }
       }
     }
@@ -489,7 +489,8 @@
         }
       }
     }
-    // None of the above cases may execute if there is a problem with the input matrix.
+    // None of the above cases may execute if there is a problem
+    // with the input matrix.
   }
 
 })(this);
