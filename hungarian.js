@@ -2,12 +2,8 @@
 // Kyle Krafka
 // April 24, 2013
 
-// Refactored from the Java code at:
-// https://github.com/w01fe/hungarian/blob/master/src/jvm/w01fe/hungarian/HungarianAlgorithm.java
-// It wasn't hard because Java and JavaScript are the same thing (lolol jokes).
-// But really, it's very similar to the (well-done) original.
-// I suppose it's not common to see O(n^3) algorithms written in JS, but the
-// future is now!
+// Original implementation (Java):
+// http://konstantinosnedas.com/dev/soft/munkres.htm (Konstantinos A. Nedas)
 
 // Store everything in an object, which is created from the
 // following function, which executes and returns immediately.
